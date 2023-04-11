@@ -65,6 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         page = FavoritesPage();
         break;
+      case 2:
+        page = ViewGrid();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -81,8 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: Text('Home'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.favorite),
-                  label: Text('Favorites'),
+                  icon: Icon(Icons.wysiwyg_outlined),
+                  label: Text('Favorites list'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.window_outlined),
+                  label: Text('Favorites grid'),
                 ),
               ],
               selectedIndex: selectedIndex,
@@ -179,24 +186,81 @@ class BigCard extends StatelessWidget {
   }
 }
 
-class FavoritesPage extends StatelessWidget {
+class ViewGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    
 
     if (appState.favorites.isEmpty) {
       return Center(
         child: Text('No favorites yet.'),
+        
+
       );
     }
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(30),
+          child: Text('You have '
+              '${appState.favorites.length} favorites:'),
+        ),
+        Expanded(
+        
+          child: GridView(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+             crossAxisCount: 2,
+              childAspectRatio: 400 / 80,
+            ),
+             children: [
+              for (var pair in appState.favorites)
+                ListTile(
+                  leading: Icon(Icons.favorite),
+                  title: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        pair.asLowerCase,
+                        semanticsLabel: pair.asPascalCase,
+                      ),
+                    ),
+                  ),
+                ),
+             ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    
+
+    if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+        
+
+      );
+    }
+    
+
     return ListView(
       children: [
+        
         Padding(
           padding: const EdgeInsets.all(20),
           child: Text('You have '
               '${appState.favorites.length} favorites:'),
         ),
+
         for (var pair in appState.favorites)
           ListTile(
             leading: Icon(Icons.favorite),
