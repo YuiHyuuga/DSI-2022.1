@@ -44,6 +44,11 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeFavorite(WordPair pair) {
+    favorites.remove(pair);
+    notifyListeners();
+  }
+
 
 }
 
@@ -121,6 +126,7 @@ class GeneratorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    var theme = Theme.of(context);
 
     IconData icon;
     if (appState.favorites.contains(pair)) {
@@ -140,9 +146,15 @@ class GeneratorPage extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  appState.toggleFavorite();
                 },
-                icon: Icon(icon),
+                
+                icon:IconButton(
+                    icon: Icon(icon),
+                    color: theme.colorScheme.primary,
+                    onPressed: () {
+                      appState.toggleFavorite();
+                    },
+                  ),
                 label: Text('Like'),
               ),
               SizedBox(width: 10),
@@ -189,6 +201,7 @@ class BigCard extends StatelessWidget {
 class ViewGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     var appState = context.watch<MyAppState>();
     
 
@@ -218,7 +231,13 @@ class ViewGrid extends StatelessWidget {
              children: [
               for (var pair in appState.favorites)
                 ListTile(
-                  leading: Icon(Icons.favorite),
+                  leading: IconButton(
+                    icon: Icon(Icons.delete_outline, semanticLabel: 'Delete'),
+                    color: theme.colorScheme.primary,
+                    onPressed: () {
+                      appState.removeFavorite(pair);
+                    },
+                  ),
                   title: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
@@ -240,6 +259,7 @@ class ViewGrid extends StatelessWidget {
 class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     var appState = context.watch<MyAppState>();
     
 
@@ -263,9 +283,18 @@ class FavoritesPage extends StatelessWidget {
 
         for (var pair in appState.favorites)
           ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
+            leading: IconButton(
+              icon: Icon(Icons.delete_outline, semanticLabel: 'Delete'),
+              color: theme.colorScheme.primary,
+               onPressed: () {
+                      appState.removeFavorite(pair);
+                    },
           ),
+          title: Text(
+            pair.asLowerCase,
+            semanticsLabel: pair.asPascalCase,
+          ),
+        ),
       ],
     );
   }
