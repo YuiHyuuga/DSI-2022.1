@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MyApp(
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -15,6 +16,12 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Namer App',
+        initialRoute: '/',
+        routes: {
+              '/first': (context) => TextFormState(),
+              '/second': (context) => FavoritesPage()
+
+        },
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
@@ -201,6 +208,7 @@ class BigCard extends StatelessWidget {
 class ViewGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var aux;
     var theme = Theme.of(context);
     var appState = context.watch<MyAppState>();
     
@@ -241,9 +249,9 @@ class ViewGrid extends StatelessWidget {
                   title: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
-                      child: Text(
-                        pair.asLowerCase,
-                        semanticsLabel: pair.asPascalCase,
+                      child: TextButton(
+                        child: Text (pair.asLowerCase),
+                        onPressed: () {},
                       ),
                     ),
                   ),
@@ -260,6 +268,7 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var aux;
     var appState = context.watch<MyAppState>();
     
 
@@ -290,12 +299,52 @@ class FavoritesPage extends StatelessWidget {
                       appState.removeFavorite(pair);
                     },
           ),
-          title: Text(
-            pair.asLowerCase,
-            semanticsLabel: pair.asPascalCase,
-          ),
+          title: TextButton(
+                    child: Text (pair.asLowerCase),
+                    onPressed: () {
+                          aux = pair;
+                          appState.removeFavorite(pair);
+                           Navigator.pushNamed(context, '/first');
+                    },
+                    )
         ),
-      ],
-    );
+     ],
+        
+          );
+      
   }
 }
+
+//ignore: must_be_immutable
+class TextFormState extends StatelessWidget {
+  TextEditingController textController = TextEditingController(text: "Editar");
+  String displayText = "";
+    
+   @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var appState = context.watch<MyAppState>();
+    return Scaffold(
+      body: Row(
+      children: [
+        TextField(
+           controller: textController, // textController
+           maxLines: null,
+        ),
+        TextFormField(
+            initialValue: "Initial Text", //  "Initial Text"  
+        ),
+        ElevatedButton(
+            onPressed: () {
+          
+         },child: Text("Show Text")),
+        Text(displayText,style: TextStyle(fontSize: 20),)
+        
+      ],
+    ));
+  }
+}
+
+  
+
+  
